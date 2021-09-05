@@ -43,12 +43,8 @@ class CommentViewSet(viewsets.ModelViewSet):
         serializer.save(author=self.request.user)
 
 
-class RetrieveCreateViewSet(mixins.CreateModelMixin, mixins.ListModelMixin,
-                            viewsets.GenericViewSet):
-    pass
-
-
-class FollowViewSet(RetrieveCreateViewSet):
+class FollowViewSet(mixins.CreateModelMixin, mixins.ListModelMixin,
+                    viewsets.GenericViewSet):
     serializer_class = FollowSerializer
     permission_classes = (IsOwnerOrReadOnly, IsAuthenticated)
     filter_backends = (filters.SearchFilter,)
@@ -56,7 +52,7 @@ class FollowViewSet(RetrieveCreateViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        new_queryset = user.follower
+        new_queryset = user.follower.all()
         return new_queryset
 
     def perform_create(self, serializer):
